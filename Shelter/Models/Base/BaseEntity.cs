@@ -10,6 +10,6 @@ namespace Shelter.Models.Base
     {
         [Key]
         [StringLength(450)]
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
     }
 }

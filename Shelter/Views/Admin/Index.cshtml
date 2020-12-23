@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Admin Page";
+}
+
+<nav class="nav" style="margin-bottom:15px">
+    <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-right:15px" onclick="getDogTable()">Dog Table</button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-right:15px" onclick="getUserTable()">User Table</button>
+</nav>
+
+<div id="TableDiv"></div>
+
+<script>
+    $(document).ready(() => {
+        getDogTable();
+    });
+
+    function getDogTable() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetDogTable", "Admin")',
+            success: (data) => {
+                $('#TableDiv').html(data);
+            },
+            error: ({ responseText }) => {
+                console.error(responseText);
+            }
+        });
+    }
+
+    function getUserTable() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetUserTable", "Admin")',
+            success: (data) => {
+                $('#TableDiv').html(data);
+            },
+            error: ({ responseText }) => {
+                console.error(responseText);
+            }
+        });
+    }
+</script>
+

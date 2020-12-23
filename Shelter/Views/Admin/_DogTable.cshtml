@@ -1,0 +1,248 @@
+﻿@model IEnumerable<Shelter.Models.Entities.Dog>
+@using Shelter.Models.Enums
+
+<div class="card" id="UserTableComponent">
+    <div class="card-header my-card-header">
+        <div>Dog Table</div>
+        <div>
+            <button type="button" class="btn btn-success btn-sm" onclick="toggleUpdateOrAdd()">Köpek Ekle</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Butonlar</th>
+                    <th scope="col">İsim</th>
+                    <th scope="col">Cinsiyet</th>
+                    <th scope="col">Doğum Tarihi</th>
+                    <th scope="col">Kilo</th>
+                    <th scope="col">Kısırlaştırılmış Mı?</th>
+                    <th scope="col">Barınak Adı</th>
+                    <th scope="col">Sahiplendirilmiş Mi?</th>
+                    <th scope="col">Sahiplenen Kullanıcı</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dog in Model)
+                {
+                    <tr>
+                        <th scope="row" style="display:flex">
+                            <button type="button"
+                                    class="btn btn-warning btn-sm"
+                                    onclick="toggleUpdateOrAdd('@dog.Id', '@dog.Name', '@dog.Gender', '@dog.Birthday', '@dog.Weight',
+        '@dog.IsSterilized', '@dog.ShelterName')">
+                                Düzenle
+                            </button>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    style="margin-left:15px"
+                                    onclick="toggleDelete('@dog.Id')">
+                                Sil
+                            </button>
+                        </th>
+                        <td>@dog.Name</td>
+                        @if (dog.Gender == GenderEnum.MALE)
+                        {
+                            <td>Erkek</td>
+                        }
+                        else
+                        {
+                            <td>Dişi</td>
+                        }
+                        <td>@dog.Birthday.ToString("dd/MM/yyyy")</td>
+                        <td>@dog.Weight</td>
+                        @if (dog.IsSterilized)
+                        {
+                            <td>Evet</td>
+                        }
+                        else
+                        {
+                            <td>Hayır</td>
+                        }
+                        <td>@dog.ShelterName</td>
+                        @if (dog.IsOwned)
+                        {
+                            <td>Evet</td>
+                        }
+                        else
+                        {
+                            <td>Hayır</td>
+                        }
+                        @if (dog.IsOwned)
+                        {
+                            <td>@dog.User.Email</td>
+                        }
+                        else
+                        {
+                            <td>-</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @*Add Update Modal*@
+    <div id="UpdateModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size:1.8em; font-weight:600">Ekle</p>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row" style="margin-bottom:0px; margin-top:2%">
+                            <div class="col-md-12">
+
+
+                                <label style="font-size:15px; font-weight:600">Adı:&nbsp;</label>
+                                <input id="inpDogName" class="form-control mr-sm-2" type="search" placeholder="Köpeğin Adını Giriniz" aria-label="Search">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:0px; margin-top:2%">
+                            <div class="col-md-12">
+                                <div class="white-box analytics-info">
+                                    <label style="font-size:15px; font-weight:600">Cinsiyeti:&nbsp;</label>
+                                    <select id="inpDogGender" class="form-control mr-sm-2" style="width:100%" type="search" aria-label="Search">
+                                        <option value=0>Erkek</option>
+                                        <option value=1>Dişi</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:0px; margin-top:2%">
+                            <div class="col-md-12">
+                                <label style="font-size:15px; font-weight:600">Doğum Tarihi:&nbsp;</label>
+                                <input type="date" id="inpBirthday">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:0px; margin-top:2%">
+                            <div class="col-md-12">
+                                <label style="font-size:15px; font-weight:600">Kilosu:&nbsp;</label>
+                                <input id="inpWeight" class="form-control mr-sm-2" type="search" placeholder="Köpeğin Kilosunu Giriniz" aria-label="Search">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:0px; margin-top:2%">
+                            <div class="col-md-12">
+                                <div class="white-box analytics-info">
+                                    <label style="font-size:15px; font-weight:600">Kısırlaştırılmış mı?:&nbsp;</label>
+                                    <select id="inpIsSterilized" class="form-control mr-sm-2" style="width:100%" type="search" aria-label="Search">
+                                        <option value="Evet">Evet</option>
+                                        <option value="Hayır">Hayır</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:0px; margin-top:2%">
+                            <div class="col-md-12">
+                                <label style="font-size:15px; font-weight:600">Barınak İsmi:&nbsp;</label>
+                                <input id="inpShelterName" class="form-control mr-sm-2" type="search" placeholder="Barınağın İsmini Giriniz" aria-label="Search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="pressUpdateOrAdd()">Ekle</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Delete Modal*@
+    <div id="DeleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size:1.8em; font-weight:600">Sil</p>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:1.5em">Seçilen Kayıtı Silmek İstediğinize Emin Misiniz?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="pressDelete()">Sil</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .my-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+</style>
+
+<script>
+    var dogIdGlobal;
+
+    function toggleUpdateOrAdd(dogId, dogName, dogGender, dogBirthday, weight, isSterilized, shelterName) {
+        if (dogId) {
+            dogIdGlobal = dogId;
+            $('#inpDogName').val(dogName);
+            $('#inpDogGender').val(dogGender === "MALE" ? 0 : 1);
+            $('#inpBirthday').val(convertToJsDateFromDateTime(dogBirthday));
+            $('#inpWeight').val(weight);
+            $('#inpIsSterilized').val(isSterilized === "True" ? "Evet" : "Hayır");
+            $('#inpShelterName').val(shelterName);
+        } else {
+            dogIdGlobal = undefined;
+            $('#inpDogName').val('');
+            $('#inpDogGender').val(0 );
+            $('#inpBirthday').val(new Date());
+            $('#inpWeight').val(weight);
+            $('#inpIsSterilized').val("Evet");
+            $('#inpShelterName').val('');
+        }
+
+        $('#UpdateModal').modal('show');
+    }
+    function pressUpdateOrAdd() {
+        const dog = {
+            Name: $('#inpDogName').val().trim(),
+            Gender: parseFloat($('#inpDogGender').val().trim()),
+            Birthday: $('#inpBirthday').val().trim(),
+            Weight: parseFloat($('#inpWeight').val().trim()),
+            IsSterilized: $('#inpIsSterilized').val().trim() === "Evet",
+            ShelterName: $('#inpShelterName').val().trim()
+        }
+
+        $.ajax({
+            type: dogIdGlobal ? "PUT" : "POST",
+            url: dogIdGlobal ? '@Url.Action("UpdateDog", "Admin")' : '@Url.Action("AddDog", "Admin")',
+            data: dogIdGlobal ? { dog: { Id: dogIdGlobal, ...dog } } : { dog },
+            success: function (data) {
+                $('#UpdateModal').modal('hide');
+                window.location.reload();
+            },
+            error: function () {
+                console.error("Database Hatası...")
+            }
+        });
+    }
+
+    function toggleDelete(dogId) {
+        dogIdGlobal = dogId;
+        $('#DeleteModal').modal('show');
+    }
+    function pressDelete() {
+        $.ajax({
+            type: "Delete",
+            url: '@Url.Action("DeleteDog", "Admin")',
+            data: { dogId: dogIdGlobal },
+            success: function (data) {
+                $('#DeleteModal').modal('hide');
+                window.location.reload();
+            },
+            error: function () {
+                console.error("Database Hatası...")
+            }
+        });
+    }
+</script>

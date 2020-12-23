@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Shelter.Models
+namespace Shelter.Models.Entities
 {
     public class Dog : BaseEntity
     {

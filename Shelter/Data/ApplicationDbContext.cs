@@ -10,9 +10,10 @@ namespace Shelter.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
+            builder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ShelterDB;Trusted_Connection=True;MultipleActiveResultSets=true");
+            base.OnConfiguring(builder);
         }
 
         public DbSet<Dog> Dogs { get; set; }

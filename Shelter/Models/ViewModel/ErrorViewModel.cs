@@ -1,6 +1,6 @@
 using System;
 
-namespace Shelter.Models
+namespace Shelter.Models.ViewModel
 {
     public class ErrorViewModel
     {
