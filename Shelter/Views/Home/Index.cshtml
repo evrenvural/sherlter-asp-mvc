@@ -31,3 +31,28 @@
     </div>
 </div>
 
+<style>
+.my-grid {
+    display: grid;
+    grid-gap: 24px;
+    grid-template-columns: repeat(3,1fr);
+}
+
+@@media screen and (max-width: 992px) {
+    .my-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@@media screen and (max-width: 576px) {
+    .my-grid {
+        grid-template-columns: repeat(1,1fr);
+    }
+
+    .my-grid .card {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+</style>
+

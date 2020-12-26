@@ -8,7 +8,7 @@ function convertToJsDateFromDateTime(date) {
     return `${year}-${month}-${day}`;
 }
 
-export function getDogAge(dogBirthday) {
+function getDogAge(dogBirthday) {
     const [birthdayMonth, birthdayYear] = moment(dogBirthday).format('MM/YYYY').split('/');
     const [todayMonth, todayYear] = moment(new Date()).format('MM/YYYY').split('/');
 

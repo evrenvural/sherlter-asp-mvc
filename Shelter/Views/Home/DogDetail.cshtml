@@ -1,8 +1,104 @@
-﻿@*@model Shelter.Models.Entities.Dog*@
-@model string
+﻿@model Shelter.Models.ViewModel.DogDetailViewModel
+@using Shelter.Models.Enums
 @{
     ViewData["Title"] = "Köpeğin Detay Sayfası";
 }
-<h1>@Model</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container">
+    <div class="card my-big-card">
+        <img src="https://doggo-photo-archive-jwbhyq12w.s3.amazonaws.com/Production/Shelter/Düğme-Mix Irk-2017-10-11/Düğme1.jpeg" class="card-img-top" alt=@Model.Dog.Name>
+        <div class="card-body">
+            <h5 class="card-title">@Model.Dog.Name</h5>
+            @if (Model.Dog.Gender == GenderEnum.MALE)
+            {
+                <p class="card-text">Cinsiyet: Erkek</p>
+            }
+            else
+            {
+                <p class="card-text">Cinsiyet: Dişi</p>
+            }
+            <p class="card-text">Doğum Tarihi: @Model.Dog.Birthday.ToString("dd/MM/yyyy")</p>
+            <p class="card-text">Kilosu: @Model.Dog.Weight</p>
+            @if (Model.Dog.IsSterilized)
+            {
+                <p class="card-text">Kısırlaştırılmış mı?: Evet</p>
+            }
+            else
+            {
+                <p class="card-text">Kısırlaştırılmış mı?: Hayır</p>
+            }
+            <p class="card-text">Barınak İsmi: @Model.Dog.ShelterName</p>
+            @if (Model.Dog.IsOwned)
+            {
+                <p class="card-text">Sahiplendirilmiş mi?: Evet</p>
+            }
+            else
+            {
+                <p class="card-text">Sahiplendirilmiş mı?: Hayır</p>
+            }
+            @if (Model.Dog.IsOwned)
+            {
+                <p class="card-text">Yeni Sahibi: @Model.Dog.User.Email</p>
+            }
+        </div>
+        <div class="card-footer" style="width:100%">
+            @if (!Model.WasRequested)
+            {
+                <button class="btn btn-primary" onclick="toggleRequestOwn('@Model.Dog.Id')">Sahiplen</button>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled>İstek Gönderildi</button>
+            }
+        </div>
+    </div>
+
+    @*Action Modal*@
+    <div id="ActionModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size:1.8em; font-weight:600">Sahiplen</p>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:1.5em">@Model.Dog.Name köpeği sahiplenmek istediğinize emin misiniz?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="pressRequestOwn()">Evet</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Hayır</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var dogIdGlobal;
+
+    function toggleRequestOwn(dogId) {
+        dogIdGlobal = dogId;
+
+        $('#ActionModal').modal('show');
+    }
+    function pressRequestOwn() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("RequestOwn", "Home")',
+            data: { dogId: dogIdGlobal },
+            success: function (data) {
+                $('#ActionModal').modal('hide');
+                window.location.reload();
+            },
+            error: function ({ responseText }) {
+                console.error(responseText)
+            }
+        });
+    }
+</script>
+
+<style>
+    .my-big-card {
+        width: 100%;
+    }
+</style>
