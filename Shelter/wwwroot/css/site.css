@@ -69,3 +69,31 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.my-grid {
+    display: grid;
+    grid-gap: 24px;
+    grid-template-columns: repeat(3,1fr);
+    //margin-left: 24px;
+}
+
+.my-card {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 992px) {
+    .my-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .my-grid {
+        grid-template-columns: repeat(1,1fr);
+    }
+
+        .my-grid .card {
+            margin-left: auto;
+            margin-right: auto;
+        }
+}

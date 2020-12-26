@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Shelter.Data;
 using Shelter.Models;
 using Shelter.Models.Base;
 using System;
@@ -18,12 +19,14 @@ namespace Shelter.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            using var context = new ApplicationDbContext();
+            var dogList = context.Dogs.ToList();
+            return View(dogList);
         }
 
-        public IActionResult Privacy()
+        public IActionResult DogDetail(string dogId)
         {
-            return View();
+            return View(model: dogId);
         }
     }
 }

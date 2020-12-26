@@ -11,6 +11,6 @@ namespace Shelter.Models.Entities
     public class User : IdentityUser
     {
         [Required]
-        public UserTypeEnum MyUserType { get; set; } = UserTypeEnum.ADMIN;
+        public UserTypeEnum MyUserType { get; set; } = UserTypeEnum.USER;
     }
 }

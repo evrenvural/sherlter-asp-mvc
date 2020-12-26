@@ -7,3 +7,12 @@ function convertToJsDateFromDateTime(date) {
     const [day, month, year] = date.split(' ')[0].split('.');
     return `${year}-${month}-${day}`;
 }
+
+export function getDogAge(dogBirthday) {
+    const [birthdayMonth, birthdayYear] = moment(dogBirthday).format('MM/YYYY').split('/');
+    const [todayMonth, todayYear] = moment(new Date()).format('MM/YYYY').split('/');
+
+    if (todayYear - birthdayYear >= 1) return `${todayYear - birthdayYear} Yaşında`;
+
+    return `${(todayMonth - birthdayMonth + 12) % 12} Aylık`;
+}

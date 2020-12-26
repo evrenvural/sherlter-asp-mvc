@@ -18,13 +18,67 @@
                 {
                     <tr>
                         <th scope="row">
-                            <button type="button" class="btn btn-danger btn-sm">Admin Yetkisi Ver</button>
+                            @if (user.MyUserType == Shelter.Models.Enums.UserTypeEnum.ADMIN)
+                            {
+                                <button type="button" class="btn btn-danger btn-sm" onclick="toggleSetRole('@user.Id', false)">Admin Yetkisini Geri Al</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-danger btn-sm" onclick="toggleSetRole('@user.Id', true)">Admin Yetkisi Ver</button>
+                            }
                         </th>
                         <td>@user.Email</td>
+                        <td>@user.MyUserType</td>
                         <td>Otto</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
+
+    @*Action Modal*@
+    <div id="ActionModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size:1.8em; font-weight:600">Yetki</p>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:1.5em" id="SureText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="pressSetRole()">Onayla</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    var userIdGlobal;
+
+    function toggleSetRole(userId, setAdmin) {
+        userIdGlobal = userId;
+
+        if (setAdmin) $('#SureText').html('Admin yetkisi atamak istediğinize emin misiniz?');
+        else $('#SureText').html('Admin yetkisini elinden almak istediğinize emin misiniz?');
+
+        $('#ActionModal').modal('show');
+    }
+    function pressSetRole() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SetUserRole", "Admin")',
+            data: { userId: userIdGlobal },
+            success: function (data) {
+                $('#ActionModal').modal('hide');
+                window.location.reload();
+            },
+            error: function ({ responseText }) {
+                console.error(responseText)
+            }
+        });
+    }
+</script>

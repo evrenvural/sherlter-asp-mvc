@@ -30,6 +30,7 @@ namespace Shelter
         {
             services.AddDbContext<ApplicationDbContext>();
             services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();

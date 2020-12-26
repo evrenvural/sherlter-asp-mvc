@@ -221,8 +221,8 @@
                 $('#UpdateModal').modal('hide');
                 window.location.reload();
             },
-            error: function () {
-                console.error("Database Hatası...")
+            error: function ({ responseText }) {
+                console.error(responseText)
             }
         });
     }
@@ -240,8 +240,8 @@
                 $('#DeleteModal').modal('hide');
                 window.location.reload();
             },
-            error: function () {
-                console.error("Database Hatası...")
+            error: function ({ responseText }) {
+                console.error(responseText)
             }
         });
     }

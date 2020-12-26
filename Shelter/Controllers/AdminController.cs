@@ -17,8 +17,13 @@ namespace Shelter.Controllers
     [Authorize]
     public class AdminController : BaseController
     {
-        public AdminController(ILogger<BaseController> logger) : base(logger)
+        readonly UserManager<User> _userManager;
+        readonly RoleManager<IdentityRole> _roleManager;
+
+        public AdminController(ILogger<BaseController> logger, UserManager<User> userManager, RoleManager<IdentityRole> roleManager) : base(logger)
         {
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index()
@@ -26,50 +31,83 @@ namespace Shelter.Controllers
             return View();
         }
 
-        public ActionResult GetUserTable()
+        #region Dog Table
+        public ActionResult GetDogTable()
         {
             using var context = new ApplicationDbContext();
-            return PartialView("~/Views/Admin/_UserTable.cshtml", context.MyUsers.ToList());
+            return PartialView("~/Views/Admin/_DogTable.cshtml", context.Dogs.ToList());
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult> AddDog(Dog dog)
+        {
+            dog.IsOwned = false;
+
+            using var context = new ApplicationDbContext();
+            context.Dogs.Add(dog);
+            await context.SaveChangesAsync();
+
+            return Json(true);
         }
 
-        #region Dog Table
-            public ActionResult GetDogTable()
+        [HttpPut]
+        public async Task<ActionResult> UpdateDog(Dog dog)
+        {
+            using var context = new ApplicationDbContext();
+            context.Dogs.Update(dog);
+            await context.SaveChangesAsync();
+
+            return Json(true);
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteDog(string dogId)
+        {
+            using var context = new ApplicationDbContext();
+            context.Dogs.Remove(new Dog { Id = dogId });
+            await context.SaveChangesAsync();
+
+            return Json(true);
+        }
+        #endregion
+
+        #region User Table
+        public ActionResult GetUserTable()
+        {
+            return PartialView("~/Views/Admin/_UserTable.cshtml", _userManager.Users.ToList());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SetUserRole(string userId)
+        {
+            using var context = new ApplicationDbContext();
+            var user = context.MyUsers.Where(x => x.Id == userId).First();
+
+            if (user.MyUserType == UserTypeEnum.ADMIN)
             {
-                using (var context = new ApplicationDbContext())
-                    return PartialView("~/Views/Admin/_DogTable.cshtml", context.Dogs.ToList());
+                await _userManager.AddToRoleAsync(user, "USER");
+                user.MyUserType = UserTypeEnum.USER;
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(user, "ADMIN");
+                user.MyUserType = UserTypeEnum.ADMIN;
             }
 
-            [HttpPost]
-            public async Task<ActionResult> AddDog(Dog dog)
-            {
-                dog.IsOwned = false;
+            await context.SaveChangesAsync();
 
-                using var context = new ApplicationDbContext();
-                context.Dogs.Add(dog);
-                await context.SaveChangesAsync();
+            return Json(true);
+        }
 
-                return Json(true);
-            }
+        [HttpDelete]
+        public async Task<ActionResult> DeleteUser(string userId)
+        {
+            using var context = new ApplicationDbContext();
+            context.MyUsers.Remove(new User { Id = userId });
+            await context.SaveChangesAsync();
 
-            [HttpPut]
-            public async Task<ActionResult> UpdateDog(Dog dog)
-            {
-                using var context = new ApplicationDbContext();
-                context.Dogs.Update(dog);
-                await context.SaveChangesAsync();
-
-                return Json(true);
-            }
-
-            [HttpDelete]
-            public async Task<ActionResult> DeleteDog(string dogId)
-            {
-                using var context = new ApplicationDbContext();
-                context.Dogs.Remove(new Dog { Id = dogId });
-                await context.SaveChangesAsync();
-
-                return Json(true);
-            }
+            return Json(true);
+        }
         #endregion
     }
 }
