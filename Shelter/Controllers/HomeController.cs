@@ -5,7 +5,9 @@ using Shelter.Data;
 using Shelter.Models;
 using Shelter.Models.Base;
 using Shelter.Models.Entities;
+using Shelter.Models.Enums;
 using Shelter.Models.ViewModel;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,13 +31,14 @@ namespace Shelter.Controllers
             return View(dogList);
         }
 
-        public IActionResult DogDetail(string dogId)
+        public async Task<IActionResult> DogDetail(string dogId)
         {
             using var context = new ApplicationDbContext();
 
-            var dog = context.Dogs.Where(x => x.Id == dogId).FirstOrDefault();
-            var userId = _userManager.GetUserId(User);
-            var wasRequested = context.Requesteds.Where(x => x.User.Id == userId && x.Dog.Id == dog.Id).FirstOrDefault() != null;
+            var dog = context.Dogs.Include(x => x.User).Where(x => x.Id == dogId).FirstOrDefault();
+            var identityUser = await _userManager.GetUserAsync(User);
+            var request = context.Requesteds.Where(x => x.User.Id == identityUser.Id && x.Dog.Id == dog.Id).FirstOrDefault();
+            var wasRequested = request != null && request.Status == RequestStatusEnum.IS_WAITING;
 
             return View(new DogDetailViewModel { Dog = dog, WasRequested = wasRequested });
         }
@@ -45,9 +48,9 @@ namespace Shelter.Controllers
         {
             using var context = new ApplicationDbContext();
             var dog = context.Dogs.Where(x => x.Id == dogId).FirstOrDefault();
-            var user = await _userManager.GetUserAsync(User);
+            var identityUser = await _userManager.GetUserAsync(User);
 
-            context.Requesteds.Add(new Requested { Dog = dog, User = user });
+            context.Requesteds.Add(new Requested { Dog = dog, UserId = identityUser.Id });
 
             await context.SaveChangesAsync();
 

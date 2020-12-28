@@ -5,6 +5,7 @@
 <nav class="nav" style="margin-bottom:15px">
     <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-right:15px" onclick="getDogTable()">Dog Table</button>
     <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-right:15px" onclick="getUserTable()">User Table</button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-right:15px" onclick="getRequestTable()">Request Table</button>
 </nav>
 
 <div id="TableDiv"></div>
@@ -31,6 +32,19 @@
         $.ajax({
             type: "GET",
             url: '@Url.Action("GetUserTable", "Admin")',
+            success: (data) => {
+                $('#TableDiv').html(data);
+            },
+            error: ({ responseText }) => {
+                console.error(responseText);
+            }
+        });
+    }
+
+    function getRequestTable() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetRequestTable", "Admin")',
             success: (data) => {
                 $('#TableDiv').html(data);
             },

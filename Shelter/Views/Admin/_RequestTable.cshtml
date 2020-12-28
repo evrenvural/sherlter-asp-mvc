@@ -1,0 +1,131 @@
+﻿@model IEnumerable<Shelter.Models.Entities.Requested>
+@using Shelter.Models.Enums
+
+<div class="card" id="UserTableComponent">
+    <div class="card-header">
+        User Table
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Butonlar</th>
+                    <th scope="col">Köpek İsmi</th>
+                    <th scope="col">İstek Tarihi</th>
+                    <th scope="col">İstek Atan Kullanıcı</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <th scope="row">
+                            @if (request.Status == RequestStatusEnum.IS_WAITING)
+                            {
+                                <button type="button" class="btn btn-success btn-sm" onclick="toggleAccept('@request.Id', '@request.Dog.Id', '@request.UserId')">Kabul Et</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="toggleReject('@request.Id')">Red Et</button>
+                            }
+                            else if (request.Status == RequestStatusEnum.ACCEPTED)
+                            {
+                                <span class="badge bg-success">Sahiplendirildi</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Ret edildi.</span>
+                            }
+                        </th>
+                        <td>@request.Dog?.Name</td>
+                        <td>@request.Date.ToString("dd/MM/yyyy")</td>
+                        <td>@request.User.Email</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @*Accept Modal*@
+    <div id="AcceptModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size:1.8em; font-weight:600">Sahiplendir</p>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:1.5em" id="SureText">Köpeği sahiplendirmek istediğinize emin misiniz?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="pressAccept()">Onayla</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Reject Modal*@
+    <div id="RejectModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size:1.8em; font-weight:600">Reddet</p>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:1.5em" id="SureText">Sahiplenme istediğini red etmek istediğinize emin misiniz?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="pressReject()">Onayla</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var requestIdGlobal;
+    var dogIdGlobal;
+    var userIdGlobal;
+
+    function toggleAccept(requestId, dogId, userId) {
+        requestIdGlobal = requestId;
+        dogIdGlobal = dogId;
+        userIdGlobal = userId;
+
+        $('#AcceptModal').modal('show');
+    }
+    function pressAccept() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AcceptRequest", "Admin")',
+            data: { requestId: requestIdGlobal, dogId: dogIdGlobal, userId: userIdGlobal },
+            success: function (data) {
+                $('#AcceptModal').modal('hide');
+                window.location.reload();
+            },
+            error: function ({ responseText }) {
+                console.error(responseText)
+            }
+        });
+    }
+
+    function toggleReject(requestId) {
+        requestIdGlobal = requestId;
+
+        $('#RejectModal').modal('show');
+    }
+    function pressReject() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("RejectRequest", "Admin")',
+            data: { requestId: requestIdGlobal },
+            success: function (data) {
+                $('#RejectModal').modal('hide');
+                window.location.reload();
+            },
+            error: function ({ responseText }) {
+                console.error(responseText)
+            }
+        });
+    }
+</script>
