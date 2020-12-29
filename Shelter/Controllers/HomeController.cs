@@ -13,9 +13,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shelter.Controllers
 {
+    [Authorize]
     public class HomeController : BaseController
     {
         readonly UserManager<User> _userManager;

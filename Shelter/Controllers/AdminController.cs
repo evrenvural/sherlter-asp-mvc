@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Shelter.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AdminController : BaseController
     {
         readonly UserManager<User> _userManager;
@@ -82,17 +82,21 @@ namespace Shelter.Controllers
         public async Task<ActionResult> SetUserRole(string userId)
         {
             using var context = new ApplicationDbContext();
-            var user = context.MyUsers.Where(x => x.Id == userId).First();
+            var identityUser = await _userManager.FindByIdAsync(userId);
 
-            if (user.MyUserType == UserTypeEnum.ADMIN)
+            var roles = await _userManager.GetRolesAsync(identityUser);
+
+            if (roles.Contains("Admin"))
             {
-                await _userManager.AddToRoleAsync(user, "USER");
-                user.MyUserType = UserTypeEnum.USER;
+                await _userManager.RemoveFromRolesAsync(identityUser, roles.ToArray());
+                await _userManager.AddToRoleAsync(identityUser, "USER");
+                context.MyUsers.Where(x => x.Id == userId).First().MyUserType = UserTypeEnum.USER;
             }
             else
             {
-                await _userManager.AddToRoleAsync(user, "ADMIN");
-                user.MyUserType = UserTypeEnum.ADMIN;
+                await _userManager.RemoveFromRolesAsync(identityUser, roles.ToArray());
+                await _userManager.AddToRoleAsync(identityUser, "ADMIN");
+                context.MyUsers.Where(x => x.Id == userId).First().MyUserType = UserTypeEnum.ADMIN;
             }
 
             await context.SaveChangesAsync();
