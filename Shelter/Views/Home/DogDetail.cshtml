@@ -5,8 +5,15 @@
 }
 
 <div class="container">
-    <div class="card my-big-card">
-        <img src="https://doggo-photo-archive-jwbhyq12w.s3.amazonaws.com/Production/Shelter/Düğme-Mix Irk-2017-10-11/Düğme1.jpeg" class="card-img-top" alt=@Model.Dog.Name>
+    <div class="card my-big-card  text-center">
+        @if (Model.Dog.IsOwned)
+        {
+            <img class="card-img-top" src="~/svg/mutlu-kopek.svg" style="width:25%; margin-left:auto; margin-right:auto;" alt="Köpek">
+        }
+        else
+        {
+            <img class="card-img-top" src="~/svg/uzgun-kopek.svg" style="width:25%; margin-left:auto; margin-right:auto;" alt="Köpek">
+        }
         <div class="card-body">
             <h5 class="card-title">@Model.Dog.Name</h5>
             @if (Model.Dog.Gender == GenderEnum.MALE)

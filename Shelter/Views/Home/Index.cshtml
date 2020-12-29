@@ -8,25 +8,39 @@
     <div class="container my-grid">
         @foreach (var dog in Model)
         {
-            <div class="my-card card" style="width: 18rem;">
-                <img class="card-img-top" src="https://doggo-photo-archive-jwbhyq12w.s3.amazonaws.com/Production/Shelter/Düğme-Mix Irk-2017-10-11/Düğme1.jpeg" alt="Card image cap">
-                <div class="card-body">
-                    <h1>@dog.Name</h1>
-                    @if (dog.Gender == GenderEnum.MALE)
-                    {
-                        <p>Cinsiyet: Erkek</p>
-                    }
-                    else
-                    {
-                        <p>Cinsiyet: Dişi</p>
-                    }
-                    <p>Doğum Tarihi: @dog.Birthday.ToString("dd/MM/yyyy")</p>
-                    <p>@dog.ShelterName</p>
-                </div>
-                <div class="card-footer">
-                    @Html.ActionLink("Detay", "DogDetail", "Home", new { dogId = dog.Id })
-                </div>
+        <div class="my-card card" style="width: 18rem;">
+            @if (dog.IsOwned)
+            {
+                <img class="card-img-top" src="~/svg/mutlu-kopek.svg" alt="Köpek">
+            }
+            else
+            {
+                <img class="card-img-top" src="~/svg/uzgun-kopek.svg" alt="Köpek">
+            }
+        <div class="card-body">
+            @if (dog.IsOwned)
+            {
+                <h1>@dog.Name (Sahiplenildi)</h1>
+            }
+            else
+            {
+                <h1>@dog.Name</h1>
+            }
+            @if (dog.Gender == GenderEnum.MALE)
+            {
+                <p>Cinsiyet: Erkek</p>
+            }
+            else
+            {
+                <p>Cinsiyet: Dişi</p>
+            }
+            <p>Doğum Tarihi: @dog.Birthday.ToString("dd/MM/yyyy")</p>
+            <p>@dog.ShelterName</p>
+        </div>
+            <div class="card-footer">
+                @Html.ActionLink("Detay", "DogDetail", "Home", new { dogId = dog.Id })
             </div>
+        </div>
         }
     </div>
 </div>
