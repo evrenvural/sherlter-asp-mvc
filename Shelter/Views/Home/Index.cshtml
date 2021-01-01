@@ -20,7 +20,7 @@
         <div class="card-body">
             @if (dog.IsOwned)
             {
-                <h1>@dog.Name (Sahiplenildi)</h1>
+                <h1>@dog.Name (@ViewData["Message"])</h1>
             }
             else
             {

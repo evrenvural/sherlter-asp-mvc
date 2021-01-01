@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 
 namespace Shelter.Controllers
 {
@@ -21,7 +22,7 @@ namespace Shelter.Controllers
         readonly UserManager<User> _userManager;
         readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminController(ILogger<BaseController> logger, UserManager<User> userManager, RoleManager<IdentityRole> roleManager) : base(logger)
+        public AdminController(ILogger<BaseController> logger, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IStringLocalizer<HomeController> localizer) : base(logger, localizer)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -36,7 +37,7 @@ namespace Shelter.Controllers
         public ActionResult GetDogTable()
         {
             using var context = new ApplicationDbContext();
-            return PartialView("~/Views/Admin/_DogTable.cshtml", context.Dogs.Include(x => x.User).ToList());
+            return PartialView("~/Views/Admin/_DogTable.cshtml", context.Dogs.Include(x => x.User).Where(x => x.IsActive).ToList());
         }
         
         [HttpPost]
@@ -65,7 +66,9 @@ namespace Shelter.Controllers
         public async Task<ActionResult> DeleteDog(string dogId)
         {
             using var context = new ApplicationDbContext();
-            context.Dogs.Remove(new Dog { Id = dogId });
+            var dog = context.Dogs.Where(x => x.Id == dogId && x.IsActive).FirstOrDefault();
+            dog.IsActive = false;
+            context.Dogs.Update(dog);
             await context.SaveChangesAsync();
 
             return Json(true);

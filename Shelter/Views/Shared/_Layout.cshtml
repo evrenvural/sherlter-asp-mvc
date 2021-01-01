@@ -33,9 +33,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                         @if (SignInManager.IsSignedIn(User) && UserManager.GetUserAsync(User).Result.MyUserType == UserTypeEnum.ADMIN)
                         {
                         <li class="nav-item">
@@ -55,7 +52,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - Shelter - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2020 - Shelter - <a asp-area="" asp-controller="Home" asp-action="Privacy">English</a>
+            @Html.ActionLink(
+                "Türkçe",
+                ViewContext.RouteData.Values["action"].ToString(),
+                new { culture = "tr-TR" })
         </div>
     </footer>
 </body>

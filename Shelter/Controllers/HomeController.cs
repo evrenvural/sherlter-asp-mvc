@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Localization;
 
 namespace Shelter.Controllers
 {
@@ -21,15 +22,17 @@ namespace Shelter.Controllers
     public class HomeController : BaseController
     {
         readonly UserManager<User> _userManager;
-        public HomeController(ILogger<HomeController> logger, UserManager<User> userManager) : base(logger)
+
+        public HomeController(ILogger<HomeController> logger, UserManager<User> userManager, IStringLocalizer<HomeController> localizer) : base(logger, localizer)
         {
             _userManager = userManager;
         }
 
         public IActionResult Index()
         {
+            FillViewDatas();
             using var context = new ApplicationDbContext();
-            var dogList = context.Dogs.ToList();
+            var dogList = context.Dogs.Where(x => x.IsActive).ToList();
             return View(dogList);
         }
 
@@ -37,7 +40,7 @@ namespace Shelter.Controllers
         {
             using var context = new ApplicationDbContext();
 
-            var dog = context.Dogs.Include(x => x.User).Where(x => x.Id == dogId).FirstOrDefault();
+            var dog = context.Dogs.Include(x => x.User).Where(x => x.Id == dogId && x.IsActive).FirstOrDefault();
             var identityUser = await _userManager.GetUserAsync(User);
             var request = context.Requesteds.Where(x => x.User.Id == identityUser.Id && x.Dog.Id == dog.Id).FirstOrDefault();
             var wasRequested = request != null && request.Status == RequestStatusEnum.IS_WAITING;
@@ -49,7 +52,7 @@ namespace Shelter.Controllers
         public async Task<ActionResult> RequestOwn(string dogId)
         {
             using var context = new ApplicationDbContext();
-            var dog = context.Dogs.Where(x => x.Id == dogId).FirstOrDefault();
+            var dog = context.Dogs.Where(x => x.Id == dogId && x.IsActive).FirstOrDefault();
             var identityUser = await _userManager.GetUserAsync(User);
 
             context.Requesteds.Add(new Requested { Dog = dog, UserId = identityUser.Id });
@@ -58,5 +61,6 @@ namespace Shelter.Controllers
 
             return Json(true);
         }
+
     }
 }

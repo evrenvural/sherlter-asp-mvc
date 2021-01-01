@@ -11,5 +11,7 @@ namespace Shelter.Models.Base
         [Key]
         [StringLength(450)]
         public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        public bool IsActive { get; set; } = true;
     }
 }
