@@ -42,8 +42,8 @@ namespace Shelter.Controllers
 
             var dog = context.Dogs.Include(x => x.User).Where(x => x.Id == dogId && x.IsActive).FirstOrDefault();
             var identityUser = await _userManager.GetUserAsync(User);
-            var request = context.Requesteds.Where(x => x.User.Id == identityUser.Id && x.Dog.Id == dog.Id).FirstOrDefault();
-            var wasRequested = request != null && request.Status == RequestStatusEnum.IS_WAITING;
+            var request = context.Requesteds.Where(x => x.User.Id == identityUser.Id && x.Dog.Id == dog.Id && x.Status ==RequestStatusEnum.IS_WAITING).FirstOrDefault();
+            var wasRequested = request != null;
 
             return View(new DogDetailViewModel { Dog = dog, WasRequested = wasRequested });
         }
