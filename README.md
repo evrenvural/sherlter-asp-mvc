@@ -2,7 +2,6 @@
 ## Numara: G181210373
 ## Ad Soyad: Evren VURAL
 ## Ders Grubu 1 / C
-## Github: https://github.com/evrenvural/sherlter-asp-mvc
 ## Youtube: https://www.youtube.com/watch?v=Ux5rccYjd20
 
 Sahiplendirme Web Sitesi, Barınaklardaki köpeklerin listelendiği ve onları sahiplenmenizi sağlayan bir web sitesidir. Ana sayfada listelenen köpeklere tıklayıp detay sayfasına gidebilir ve onlara sahiplenme isteği gönderebilirsiniz. Bu istekler, admin sayfasında request tablosuna düşer ve admin, bu sayfada kimin isteği attığını ve ne zaman attığını görebilir. Admin eğer isteği kabul ederse sahiplenme gerçekleşir. Red ederse sahiplenme gerçekleşmez. Bir user birden fazla köpeğe istekte bulunabilir.
