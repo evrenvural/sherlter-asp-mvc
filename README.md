@@ -11,4 +11,3 @@ Sahiplendirme Web Sitesi, Barınaklardaki köpeklerin listelendiği ve onları s
 
 Ödevde mümkün olduğunca boş sınıf bırakmamaya çalışarak Base abstract classlar oluşturdum. Bu class’ları oluşturmamdaki amaç ise ortak özellikleri tek bir yerden kontrol etmek istememdi.
 Ön tarafta ise genel olarak bootstrap tema yapısını kullandım. Köpeklerin listelendiği ana sayfada ise CSS’in grid özelliğinden faydalandım.
-Ödeve ait ekran görüntüleri aşağıdadır.
